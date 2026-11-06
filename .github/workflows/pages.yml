@@ -1,4 +1,4 @@
-# Publishes site/ to GitHub Pages (mannan.dev/openrelay-ios4). The IPAs stay in the S3 bucket and the pages link to them directly.
+# Publishes site/ to GitHub Pages (mannan.dev/ipod). The IPAs stay in the S3 bucket and the pages link to them directly.
 name: Pages
 on:
   push:
