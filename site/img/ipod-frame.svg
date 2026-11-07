@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="1280" viewBox="0 0 780 1280">
+  <!-- Vector version of frame.swift, used by the Sets Coach device shot. -->
+  <defs>
+    <linearGradient id="rim" x2="0" y2="1"><stop stop-color="#d9d9d9"/><stop offset="1" stop-color="#737373"/></linearGradient>
+    <linearGradient id="glass" x2="0" y2="1"><stop stop-color="#1f1f1f"/><stop offset="1" stop-color="#050505"/></linearGradient>
+    <linearGradient id="button" x2="0" y2="1"><stop stop-color="#1a1a1a"/><stop offset="1" stop-color="#383838"/></linearGradient>
+    <linearGradient id="gloss" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".10"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <mask id="screen"><rect width="780" height="1280" fill="#fff"/><rect x="70" y="150" width="640" height="960" fill="#000"/></mask>
+    <clipPath id="face"><rect x="6" y="6" width="768" height="1268" rx="95"/></clipPath>
+  </defs>
+  <g mask="url(#screen)">
+    <rect width="780" height="1280" rx="100" fill="url(#rim)"/>
+    <rect x="6" y="6" width="768" height="1268" rx="95" fill="url(#glass)"/>
+  </g>
+  <rect x="70" y="150" width="640" height="960" fill="none" stroke="#000" stroke-opacity=".6"/>
+  <circle cx="390" cy="1194" r="56" fill="url(#button)" stroke="#595959" stroke-width="2"/>
+  <rect x="368" y="1172" width="44" height="44" rx="8" fill="none" stroke="#8c8c8c" stroke-width="3"/>
+  <circle cx="390" cy="82" r="10" fill="#292929"/>
+  <path d="M0 0H780V358.4L0 537.6Z" fill="url(#gloss)" clip-path="url(#face)"/>
+</svg>
