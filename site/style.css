@@ -36,7 +36,7 @@ a{color:#08c;text-decoration:none}a:hover{text-decoration:underline}
 .feature .txt p+p{margin-top:12px}
 /* overview cards (home) */
 .trio{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:36px 0 20px}
-.trio a.card{flex:0 1 calc(25% - 12px);box-sizing:border-box;text-align:center;color:#333;padding:20px 10px 24px;border-radius:10px;border:1px solid #e3e3e3;background:linear-gradient(#fff,#f3f3f3)}
+.trio a.card{flex:0 1 calc(33.333% - 11px);box-sizing:border-box;text-align:center;color:#333;padding:20px 10px 24px;border-radius:10px;border:1px solid #e3e3e3;background:linear-gradient(#fff,#f3f3f3)}
 .trio a.card:hover{text-decoration:none;border-color:#bbb}
 .trio img{width:140px;display:block;margin:0 auto 14px}
 .trio h3{font-size:21px;font-weight:normal;letter-spacing:-.8px;color:#111;margin:0 0 4px}
@@ -84,3 +84,11 @@ footer{text-align:center;color:#888;font-size:11px;padding:30px 0 40px;border-to
 .carousel .dots a{display:inline-block;width:9px;height:9px;border-radius:5px;background:#c7c7c7;margin:0 4px;box-shadow:inset 0 1px 1px rgba(0,0,0,.25)}
 .carousel .dots a.on{background:#4c4c4c}
 @media (max-width:760px){.carousel .slide{padding:0 18px}.carousel .arrow{display:none}}
+/* Original app screenshots sit inside the site's shared iPod frame. */
+.device-shot{display:block;position:relative;width:300px;max-width:100%;margin:0 auto;background:url(img/cardsdecks-device.png) center/100% 100% no-repeat}
+.device-shot:before{content:"";display:block;padding-top:187.2659%}
+.device-shot img{position:absolute;left:8.8015%;top:16.8%;width:83.3333%;height:66.7%;max-width:none;margin:0}
+.trio .device-shot{width:140px;margin-bottom:14px}
+.feature .device-shot img{width:83.3333%}
+.feature .txt .example-note{font-size:13px;color:#777}
+@media (max-width:760px){.feature .device-shot{width:220px}}
