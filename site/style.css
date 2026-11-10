@@ -20,7 +20,7 @@ a{color:#08c;text-decoration:none}a:hover{text-decoration:underline}
 #sub nav{margin-left:auto;display:flex;gap:4px}
 #sub nav a{color:#333;font-size:13px;padding:4px 12px;border-radius:12px}
 #sub nav a.on,#sub nav a:hover{background:#d0d0d0;text-decoration:none}
-#sub nav a.buy{background:linear-gradient(#b6ea4e,#75be1a);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.35);border:1px solid #5c9e0d}
+#sub nav a.buy{background:linear-gradient(#70b7ef,#267bc4);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.35);border:1px solid #1765a5}
 /* hero */
 .hero{text-align:center;padding:40px 0 20px;background:linear-gradient(#fff,#f2f2f2);border-bottom:1px solid #e3e3e3}
 .hero h1{font-size:56px;font-weight:normal;letter-spacing:-2px;color:#111;margin:0 0 6px;line-height:1.05}
@@ -44,8 +44,8 @@ a{color:#08c;text-decoration:none}a:hover{text-decoration:underline}
 .trio .more{color:#08c;font-size:14px}
 /* buy box */
 .buy{text-align:center;padding:40px 0}
-.btn{display:inline-block;padding:11px 26px;font-size:16px;color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.4);border:1px solid #5c9e0d;border-radius:5px;background:linear-gradient(#b6ea4e,#8fd12e 50%,#75be1a 51%,#5c9e0d);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
-.btn:hover{text-decoration:none;background:linear-gradient(#c3f064,#9cdb3a 50%,#80c923 51%,#66aa12)}
+.btn{display:inline-block;padding:11px 26px;font-size:16px;color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.4);border:1px solid #1765a5;border-radius:5px;background:linear-gradient(#73b9ee,#4599dc 50%,#3186cd 51%,#226eb5);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.btn:hover{text-decoration:none;background:linear-gradient(#87c7f4,#58a7e5 50%,#3c94da 51%,#287ac2)}
 .buy small{display:block;color:#888;font-size:12px;margin-top:10px}
 /* install page */
 ol.steps{margin:20px 0;padding:0 0 0 22px;font-size:16px;color:#444}
@@ -54,7 +54,7 @@ code{font-family:Menlo,Monaco,monospace;font-size:13px;background:#f3f3f3;border
 footer{text-align:center;color:#888;font-size:11px;padding:30px 0 40px;border-top:1px solid #e6e6e6;margin-top:30px}
 @media (max-width:760px){.hero h1{font-size:36px;letter-spacing:-1px}.hero h2{font-size:17px}.feature,.feature.flip{flex-direction:column;text-align:center;padding:32px 0}.feature .pic,.feature .pic img{width:220px}.feature .txt h3{font-size:26px}.trio{flex-direction:column}.trio a.card{flex:1 1 auto}#gn a{font-size:12px}#sub .name{font-size:15px}#sub nav a{padding:4px 8px;font-size:12px}}
 
-.ct .hero{background:linear-gradient(#fff,#f7f7f7)}.ct .hero h1{color:#C8102E}.ct #sub .buy,.ct .btn{background:#C8102E;border-color:#8e0b20}.ct .line{display:block;width:100%;max-width:1180px;margin:0 auto 10px;border:1px solid #e3e3e3;border-radius:10px;background:#fff}.ct .feature .txt h3 em{color:#C8102E;font-style:normal}.ct .board{display:inline-block;background:#111;color:#FFB000;font-family:"Courier New",Courier,monospace;font-weight:bold;font-size:15px;letter-spacing:1px;padding:8px 14px;border-radius:6px;margin:0 0 14px}
+.ct .hero{background:linear-gradient(#fff,#f7f7f7)}.ct .hero h1{color:#C8102E}.ct .line{display:block;width:100%;max-width:1180px;margin:0 auto 10px;border:1px solid #e3e3e3;border-radius:10px;background:#fff}.ct .feature .txt h3 em{color:#C8102E;font-style:normal}.ct .board{display:inline-block;background:#111;color:#FFB000;font-family:"Courier New",Courier,monospace;font-weight:bold;font-size:15px;letter-spacing:1px;padding:8px 14px;border-radius:6px;margin:0 0 14px}
 
 @media (max-width:760px){
 #gn{height:auto;min-height:38px;position:relative}
@@ -94,3 +94,8 @@ footer{text-align:center;color:#888;font-size:11px;padding:30px 0 40px;border-to
 .trio .device-shot{width:140px;margin-bottom:14px}
 .feature .txt .example-note{font-size:13px;color:#777}
 @media (max-width:760px){.feature .device-shot{width:220px}}
+
+/* Classic Apple-style blue calls to action. */
+#sub nav a.buy:hover{background:linear-gradient(#87c7f4,#287ac2)}
+.btn:active,#sub nav a.buy:active{background:linear-gradient(#226eb5,#4599dc);box-shadow:inset 0 1px 3px rgba(0,0,0,.25)}
+.btn:focus-visible,#sub nav a.buy:focus-visible{outline:3px solid #8ac5f2;outline-offset:3px}
