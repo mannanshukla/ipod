@@ -70,19 +70,24 @@ static NSString *kKey = @"or_api_key", *kModel = @"or_model", *kBase = @"or_base
     [self sendAttempt];
 }
 // Shrink any attached photos further for a retry (a dead connection mid-upload is the usual failure on this device).
+// Only the 2 most recent photos are sent (see sendAttempt); older ones become "[photo]" whatever their size, so they are
+// not re-encoded. Each re-encode decodes a whole photo, so it gets its own pool.
 - (NSArray *)messagesWithSmallerImages:(NSArray *)messages maxSide:(CGFloat)side {
-    NSMutableArray *out = [NSMutableArray arrayWithCapacity:[messages count]];
-    for (NSDictionary *m in messages) {
+    NSMutableArray *out = [NSMutableArray arrayWithArray:messages];
+    NSInteger imagesLeft = 2;
+    for (NSInteger i = (NSInteger)[out count] - 1; i >= 0 && imagesLeft > 0; i--) {
+        NSDictionary *m = [out objectAtIndex:i];
         NSString *img = [m objectForKey:@"image"];
-        if ([img length]) {
-            UIImage *ui = [ORImage imageFromBase64:img];
-            if (ui) {
-                NSMutableDictionary *mm = [NSMutableDictionary dictionaryWithDictionary:m];
-                [mm setObject:[ORImage jpegBase64ForImage:ui maxSide:side quality:0.55] forKey:@"image"];
-                [out addObject:mm]; continue;
-            }
+        if (![img length]) continue;
+        imagesLeft--;
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        UIImage *ui = [ORImage imageFromBase64:img];
+        if (ui) {
+            NSMutableDictionary *mm = [NSMutableDictionary dictionaryWithDictionary:m];
+            [mm setObject:[ORImage jpegBase64ForImage:ui maxSide:side quality:0.55] forKey:@"image"];
+            [out replaceObjectAtIndex:i withObject:mm];
         }
-        [out addObject:m];
+        [pool drain];
     }
     return out;
 }

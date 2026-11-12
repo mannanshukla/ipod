@@ -46,19 +46,29 @@ static void fillGradient(CGContextRef ctx, CGRect r, const CGFloat *c, size_t n)
 - (id)initWithFrame:(CGRect)f { if ((self = [super initWithFrame:f])) { self.backgroundColor = [UIColor clearColor]; self.opaque = NO; self.contentMode = UIViewContentModeRedraw; } return self; }
 - (void)dealloc { [text release]; [role release]; [timestamp release]; [image release]; [super dealloc]; }
 - (void)setImage:(UIImage *)i { [i retain]; [image release]; image = i; [self setNeedsDisplay]; }
+- (void)dropImageKeepingContents { [image release]; image = nil; }
 - (void)setText:(NSString *)t { [text release]; text = [t copy]; [self setNeedsDisplay]; }
 - (void)setRole:(NSString *)r { [role release]; role = [r copy]; [self setNeedsDisplay]; }
 - (void)setTimestamp:(NSString *)s { [timestamp release]; timestamp = [s copy]; [self setNeedsDisplay]; }
 
 // Every reload measures every row, and a streamed reply reloads per token, so measured sizes are remembered.
-static NSMutableDictionary *sizes = nil;
-+ (void)forgetSizes { [sizes removeAllObjects]; }
+// Two generations: when the newer fills up it becomes the older, and anything still on screen is promoted back on its
+// next lookup. A streamed reply's partial texts age out without forcing every other bubble to be measured again.
+static NSMutableDictionary *sizes = nil, *olderSizes = nil;
++ (void)forgetSizes { [sizes removeAllObjects]; [olderSizes release]; olderSizes = nil; }
 + (CGSize)textSize:(NSString *)t {
     NSString *s = [t length] ? t : @" ";
-    if (!sizes) { sizes = [[NSMutableDictionary alloc] init]; [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(forgetSizes) name:UIApplicationDidReceiveMemoryWarningNotification object:nil]; }
-    NSValue *v = [sizes objectForKey:s]; if (v) return [v CGSizeValue];
+    if (!sizes) {
+        sizes = [[NSMutableDictionary alloc] init];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];   // measurements come back as rows are drawn
+        [nc addObserver:self selector:@selector(forgetSizes) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+        [nc addObserver:self selector:@selector(forgetSizes) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    }
+    NSValue *v = [sizes objectForKey:s];
+    if (!v && (v = [olderSizes objectForKey:s])) [sizes setObject:v forKey:s];
+    if (v) return [v CGSizeValue];
     CGSize sz = [s sizeWithFont:[ORStyle messageFont] constrainedToSize:CGSizeMake(MAX_W - 2*PAD_X, 10000) lineBreakMode:UILineBreakModeWordWrap];
-    if ([sizes count] >= 200) [sizes removeAllObjects];   // the partial texts of a streamed reply would otherwise pile up
+    if ([sizes count] >= 200) { [olderSizes release]; olderSizes = sizes; sizes = [[NSMutableDictionary alloc] init]; }
     [sizes setObject:[NSValue valueWithCGSize:sz] forKey:s];
     return sz;
 }

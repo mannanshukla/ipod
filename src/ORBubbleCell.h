@@ -11,6 +11,7 @@
 + (CGFloat)heightForText:(NSString *)text imageSize:(CGSize)imageSize timestamp:(BOOL)hasTimestamp delivered:(BOOL)delivered;   // same, from the photo's pixel size
 + (CGFloat)typingHeight;
 + (CGSize)imageDrawSize:(UIImage *)img;
+- (void)dropImageKeepingContents;   // frees the photo without redrawing; the owner must reconfigure before the next draw
 @end
 
 @interface ORBubbleCell : UITableViewCell { ORBubbleView *bubble; }

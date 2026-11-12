@@ -9,11 +9,23 @@
     if ((self = [super initWithStyle:UITableViewStylePlain])) {
         self.title = @"Messages";
         self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(addContact)] autorelease];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc addObserver:self selector:@selector(didEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [nc addObserver:self selector:@selector(dropFormatters) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
     }
     return self;
 }
+- (void)dealloc { [[NSNotificationCenter defaultCenter] removeObserver:self]; [self dropFormatters]; [super dealloc]; }
+- (void)dropFormatters { [timeFormatter release]; timeFormatter = nil; [weekdayFormatter release]; weekdayFormatter = nil; [dateFormatter release]; dateFormatter = nil; }
+// Under an open thread the list is rebuilt on return, so let its views go while suspended.
+- (void)didEnterBackground { [self dropFormatters]; if ([self isViewLoaded] && !self.view.window) { self.view = nil; [self viewDidUnload]; } }
+- (void)viewDidUnload { [super viewDidUnload]; savedOffset = scrollOffset; hasSavedOffset = YES; }   // the table is gone; its offset was tracked while scrolling
+- (void)scrollViewDidScroll:(UIScrollView *)sv { scrollOffset = sv.contentOffset; }
 - (void)viewDidLoad { [super viewDidLoad]; self.tableView.rowHeight = 64; }
-- (void)viewWillAppear:(BOOL)animated { [super viewWillAppear:animated]; [self.tableView reloadData]; }
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated]; [self.tableView reloadData];
+    if (hasSavedOffset) { self.tableView.contentOffset = savedOffset; hasSavedOffset = NO; }
+}
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     if (![[ORSettings apiKey] length]) [self performSelector:@selector(needKey) withObject:nil afterDelay:0.6];
@@ -60,17 +72,16 @@
     NSNumber *ts = [[h lastObject] objectForKey:@"ts"];
     if (!ts) return @"";
     NSDate *d = [NSDate dateWithTimeIntervalSince1970:[ts doubleValue]];
-    NSDateFormatter *f = [[[NSDateFormatter alloc] init] autorelease];
     NSCalendar *cal = [NSCalendar currentCalendar];
     // like Messages: a time today, "Yesterday", the weekday within the week, then a date
     NSDateComponents *a = [cal components:(NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit) fromDate:d];
     NSDateComponents *b = [cal components:(NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit) fromDate:[NSDate date]];
     NSInteger days = [[cal components:NSDayCalendarUnit fromDate:[cal dateFromComponents:a] toDate:[cal dateFromComponents:b] options:0] day];
-    if (days <= 0) [f setDateFormat:@"h:mm a"];
-    else if (days == 1) return @"Yesterday";
-    else if (days < 7) [f setDateFormat:@"EEEE"];
-    else [f setDateFormat:@"M/d/yy"];
-    return [f stringFromDate:d];
+    if (days == 1) return @"Yesterday";
+    // one formatter per format, not one per row on every reload
+    NSDateFormatter **slot = days <= 0 ? &timeFormatter : days < 7 ? &weekdayFormatter : &dateFormatter;
+    if (!*slot) { *slot = [[NSDateFormatter alloc] init]; [*slot setDateFormat:(days <= 0 ? @"h:mm a" : days < 7 ? @"EEEE" : @"M/d/yy")]; }
+    return [*slot stringFromDate:d];
 }
 - (NSInteger)tableView:(UITableView *)tv numberOfRowsInSection:(NSInteger)s { return [[ORContacts all] count]; }
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)ip {

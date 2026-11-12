@@ -52,6 +52,19 @@ static const char b64tab[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx
     if (![b64 length]) return nil;
     return [UIImage imageWithData:[self dataFromBase64:b64]];
 }
++ (UIImage *)downsample:(UIImage *)img toSize:(CGSize)size {
+    // A 512-pixel photo decodes to ~800 KB but a bubble draws it in at most 206 by 180 points.
+    CGFloat screen = [[UIScreen mainScreen] scale];
+    if (!img || !(size.width >= 1 && size.height >= 1)) return img;
+    CGSize px = CGSizeMake(roundf(size.width * screen), roundf(size.height * screen));
+    if (px.width * px.height >= img.size.width * img.scale * img.size.height * img.scale) return img;
+    CGSize points = CGSizeMake(px.width / screen, px.height / screen);
+    UIGraphicsBeginImageContextWithOptions(points, NO, screen);
+    [img drawInRect:CGRectMake(0, 0, points.width, points.height)];
+    UIImage *r = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return r ?: img;
+}
 + (UIImage *)cameraGlyph {
     CGSize sz = CGSizeMake(30, 30);
     UIGraphicsBeginImageContextWithOptions(sz, NO, 0);

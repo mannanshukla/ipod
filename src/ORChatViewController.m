@@ -6,6 +6,7 @@
 #import "ORUnprompted.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <QuartzCore/QuartzCore.h>
 
 #define BAR_H 44.0f
 #define CAM_W 36.0f
@@ -55,22 +56,40 @@ static void loadSounds(void) {
         client = [[ORClient alloc] init]; client.delegate = self;
         client.personaPrompt = [c objectForKey:@"prompt"];
         client.modelOverride = [c objectForKey:@"model"];
-        imageCache = [[NSMutableDictionary alloc] init]; imageSizes = [[NSMutableDictionary alloc] init];
+        imageCache = [[NSCache alloc] init]; [imageCache setCountLimit:6]; imageSizes = [[NSMutableDictionary alloc] init];
         burstQueue = [[NSMutableArray alloc] init];
         loadSounds();
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];   // a decoded photo is ~800 KB; they come back from base64 when scrolled to
         [nc addObserver:self selector:@selector(dropImages) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
-        [nc addObserver:self selector:@selector(dropImages) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [nc addObserver:self selector:@selector(didEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [nc addObserver:self selector:@selector(willEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
     }
     return self;
 }
-- (void)dropImages { [imageCache removeAllObjects]; }
+static NSDateFormatter *timestampFormatter = nil;   // rebuilt on the next timestamp
+- (void)dropImages { [imageCache removeAllObjects]; [timestampFormatter release]; timestampFormatter = nil; }
+- (void)didEnterBackground {
+    [self dropImages];
+    if (![self isViewLoaded]) return;
+    // Under the camera or a mail sheet the whole view is rebuilt on return, as after a memory warning.
+    if (!self.view.window) { self.view = nil; [self viewDidUnload]; return; }
+    // On screen, bubbles keep what they drew and only let go of their photos; cells are reconfigured on return.
+    [table layoutIfNeeded];
+    for (UITableViewCell *cell in [table visibleCells]) {
+        if (![cell isKindOfClass:[ORBubbleCell class]] || !((ORBubbleCell *)cell).bubble.image) continue;
+        ORBubbleView *b = ((ORBubbleCell *)cell).bubble;
+        [cell layoutIfNeeded]; [b.layer displayIfNeeded]; [b dropImageKeepingContents]; reconfigureOnForeground = YES;
+    }
+    [imageCache removeAllObjects];   // the layout pass above may have decoded photos into it again
+}
+- (void)willEnterForeground { if (reconfigureOnForeground && table) [self reload]; reconfigureOnForeground = NO; }
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [burstTimer invalidate]; [typingTimer invalidate];
+    [burstTimer invalidate]; [burstTimer release]; [typingTimer invalidate]; [typingTimer release];
+    [client cancel];   // a connection retains its client; nothing would read the rest of the reply
     client.delegate = nil; [client release]; [messages release]; [pending release]; [burstQueue release];
     [table release]; [inputBar release]; [input release]; [sendButton release]; [cameraButton release]; [spinner release];
-    [attachedImage release]; [attachedBase64 release]; [imageCache release]; [imageSizes release]; [visibleRows release]; [contact release]; [historyKey release]; [menuRow release];
+    [attachedImage release]; [attachedBase64 release]; [imageCache release]; [imageSizes release]; [visibleRows release]; [contact release]; [historyKey release]; [menuRow release]; [unloadedDraft release];
     [super dealloc];
 }
 
@@ -97,7 +116,7 @@ static void loadSounds(void) {
 
     cameraButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
     cameraButton.frame = CGRectMake(2, 7, CAM_W, 30);
-    [cameraButton setImage:[ORImage cameraGlyph] forState:UIControlStateNormal];
+    [cameraButton setImage:(attachedImage ?: [ORImage cameraGlyph]) forState:UIControlStateNormal];
     [cameraButton addTarget:self action:@selector(pickPhoto) forControlEvents:UIControlEventTouchUpInside];
     [inputBar addSubview:cameraButton];
 
@@ -112,6 +131,7 @@ static void loadSounds(void) {
     input.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     input.delegate = self;
     input.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    if (unloadedDraft) { input.text = unloadedDraft; [unloadedDraft release]; unloadedDraft = nil; }
     [inputBar addSubview:input];
 
     sendButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
@@ -143,6 +163,7 @@ static void loadSounds(void) {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc removeObserver:self name:UIKeyboardWillShowNotification object:nil]; [nc removeObserver:self name:UIKeyboardWillHideNotification object:nil]; [nc removeObserver:self name:ORHistoryChangedNotification object:nil];
     table.dataSource = nil; table.delegate = nil;
+    [unloadedDraft release]; unloadedDraft = [input.text copy];
     [table release]; table = nil; [inputBar release]; inputBar = nil; [input release]; input = nil; [sendButton release]; sendButton = nil; [cameraButton release]; cameraButton = nil;
 }
 - (void)historyChanged:(NSNotification *)n {
@@ -284,16 +305,20 @@ static void loadSounds(void) {
 }
 - (void)attachImage:(UIImage *)img {
     if (!img) return;
+    // The scaled copy, its JPEG and the decoded preview are all temporary: keep only the base64 and the button thumbnail.
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [attachedBase64 release]; attachedBase64 = [[ORImage jpegBase64ForImage:img maxSide:512 quality:0.6] retain];
-    [attachedImage release]; attachedImage = [[ORImage imageFromBase64:attachedBase64] retain];
+    UIImage *decoded = [ORImage imageFromBase64:attachedBase64];
     UIGraphicsBeginImageContextWithOptions(CGSizeMake(30, 30), NO, 0);
     [[UIBezierPath bezierPathWithRoundedRect:CGRectMake(1, 1, 28, 28) cornerRadius:4] addClip];
-    CGFloat f = MAX(28 / attachedImage.size.width, 28 / attachedImage.size.height);
-    CGSize ds = CGSizeMake(attachedImage.size.width * f, attachedImage.size.height * f);
-    [attachedImage drawInRect:CGRectMake(15 - ds.width/2, 15 - ds.height/2, ds.width, ds.height)];
+    CGFloat f = MAX(28 / decoded.size.width, 28 / decoded.size.height);
+    CGSize ds = CGSizeMake(decoded.size.width * f, decoded.size.height * f);
+    [decoded drawInRect:CGRectMake(15 - ds.width/2, 15 - ds.height/2, ds.width, ds.height)];
     UIImage *thumb = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    [cameraButton setImage:thumb forState:UIControlStateNormal];
+    [attachedImage release]; attachedImage = [thumb retain];
+    [pool drain];
+    [cameraButton setImage:attachedImage forState:UIControlStateNormal];
     [input becomeFirstResponder];
 }
 - (void)attachLastPhoto {
@@ -392,7 +417,6 @@ static void loadSounds(void) {
     NSMutableDictionary *m = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"user", @"role", text, @"content", [self now], @"ts", nil];
     if (attachedBase64) {
         [m setObject:attachedBase64 forKey:@"image"];
-        [imageCache setObject:attachedImage forKey:[m objectForKey:@"ts"]];
         [attachedImage release]; attachedImage = nil; [attachedBase64 release]; attachedBase64 = nil;
         [cameraButton setImage:[ORImage cameraGlyph] forState:UIControlStateNormal];
     }
@@ -549,16 +573,21 @@ static void loadSounds(void) {
 }
 - (NSString *)timestampForRow:(NSInteger)row inVisible:(NSArray *)v {
     if (![self showsTimestampForRow:row inVisible:v]) return nil;
-    static NSDateFormatter *df = nil;
-    if (!df) { df = [[NSDateFormatter alloc] init]; [df setDateFormat:@"MMM d, yyyy h:mm a"]; }
-    return [df stringFromDate:[NSDate dateWithTimeIntervalSince1970:[[[v objectAtIndex:row] objectForKey:@"ts"] doubleValue]]];
+    if (!timestampFormatter) { timestampFormatter = [[NSDateFormatter alloc] init]; [timestampFormatter setDateFormat:@"MMM d, yyyy h:mm a"]; }
+    return [timestampFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:[[[v objectAtIndex:row] objectForKey:@"ts"] doubleValue]]];
 }
 - (UIImage *)imageFor:(NSDictionary *)m {
     NSString *b64 = [m objectForKey:@"image"];
     if (![b64 length]) return nil;
     id key = [m objectForKey:@"ts"] ?: b64;
     UIImage *img = [imageCache objectForKey:key];
-    if (!img) { img = [ORImage imageFromBase64:b64]; if (img) [imageCache setObject:img forKey:key]; }
+    if (!img) {   // decode once, keep only a bitmap of the size the bubble draws
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        UIImage *full = [ORImage imageFromBase64:b64];
+        if (full) { [imageSizes setObject:[NSValue valueWithCGSize:full.size] forKey:key]; img = [[ORImage downsample:full toSize:[ORBubbleView imageDrawSize:full]] retain]; }
+        [pool drain]; [img autorelease];
+        if (img) [imageCache setObject:img forKey:key];
+    }
     return img;
 }
 - (CGSize)imageSizeFor:(NSDictionary *)m {   // heights for every row need only the photo's size, not the photo
@@ -566,7 +595,12 @@ static void loadSounds(void) {
     if (![b64 length]) return CGSizeZero;
     id key = [m objectForKey:@"ts"] ?: b64;
     NSValue *v = [imageSizes objectForKey:key];
-    if (!v) { UIImage *img = [imageCache objectForKey:key] ?: [ORImage imageFromBase64:b64]; v = [NSValue valueWithCGSize:img ? img.size : CGSizeZero]; [imageSizes setObject:v forKey:key]; }
+    if (!v) {   // the cache holds downsampled bitmaps, so read the size from the photo itself; only its header is parsed
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        UIImage *img = [ORImage imageFromBase64:b64];
+        v = [NSValue valueWithCGSize:img ? img.size : CGSizeZero]; [imageSizes setObject:v forKey:key];
+        [pool drain];
+    }
     return [v CGSizeValue];
 }
 - (NSInteger)tableView:(UITableView *)tv numberOfRowsInSection:(NSInteger)s { return [[self visible] count]; }
