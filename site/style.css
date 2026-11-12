@@ -194,3 +194,133 @@ footer .note{color:#666}
 @media(max-width:480px){.lineup img:first-child,.lineup img:last-child{display:none}}
 @media(max-width:760px){#sub,#sub .wrap{height:auto}}
 ul.downloads .ver{color:#666}
+
+/* ===== 2010 launch shell (from apple.com/ipodtouch, Sept 2010 captures) =====
+   Gray page, silver rounded global bar, product header on the gray,
+   white rounded sheets with a soft shadow, breadcrumb directory footer. */
+body{background:#e8e9ea linear-gradient(#dcdddf,#eceded 320px,#eceded) no-repeat;color:#333}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* Global bar */
+#gn{width:980px;max-width:calc(100% - 20px);height:36px;margin:18px auto 0;border:1px solid #8a8a8a;border-radius:5px;background:linear-gradient(#d4d4d4,#b3b3b3 50%,#a6a6a6 51%,#b5b5b5);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.6);overflow:hidden}
+#gn ul{width:100%;max-width:none}
+#gn li{border-left:1px solid rgba(255,255,255,.45);border-right:1px solid rgba(0,0,0,.18)}
+#gn a{line-height:36px;font-size:13px;color:#2b2b2b;text-shadow:0 1px 0 rgba(255,255,255,.55)}
+#gn a.home svg circle,#gn a.home svg rect{stroke:#3a3a3a}
+#gn a:hover{background:linear-gradient(#c4c4c4,#999);text-decoration:none}
+#gn li.on a{background:linear-gradient(#5e5e5e,#7c7c7c);color:#fff;text-shadow:0 -1px 0 #333;box-shadow:inset 0 1px 4px rgba(0,0,0,.5)}
+/* Product header sits on the gray */
+#sub{width:980px;max-width:calc(100% - 20px);margin:0 auto;height:auto;background:none;border:0}
+#sub .wrap{width:100%;max-width:none;height:auto;padding:18px 6px 12px;box-sizing:border-box}
+#sub .name{display:flex;align-items:center;gap:12px;font-size:32px;font-weight:normal;letter-spacing:-1px;color:#3c3c3c;text-shadow:0 1px 0 #fff}
+#sub nav{gap:22px;align-items:center}
+#sub nav a{padding:0;border-radius:0;font-size:12px;color:#444;background:none;text-shadow:0 1px 0 #fff}
+#sub nav a.on,#sub nav a:hover{background:none;color:#999;text-decoration:none}
+#sub nav a.buy{padding:3px 12px;border-radius:12px;font-size:11px;color:#fff;border:1px solid #1d6fb8;background:linear-gradient(#6fb4ec,#2a7fcc);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);text-shadow:0 -1px 0 rgba(0,0,0,.3)}
+#sub nav a.buy:hover{color:#fff;background:linear-gradient(#82c1f1,#3189d6)}
+/* iOS 4 icon: rounded square, top-half gloss, soft drop shadow */
+.appicon{position:relative;display:inline-block;flex:none;width:40px;height:40px;border-radius:9px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.appicon img{display:block;width:100%;height:100%;object-fit:cover}
+.appicon:after{content:"";position:absolute;left:-25%;right:-25%;top:-60%;height:105%;border-radius:0 0 50% 50%;background:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.12))}
+.appicon.pre:after{display:none}
+.appicon.pre{box-shadow:none;border-radius:0;overflow:visible}
+.appicon.pre img{object-fit:contain}
+/* Sheets */
+.sheet{width:980px;max-width:calc(100% - 20px);margin:0 auto 18px;background:#fff;border-radius:5px;box-shadow:0 1px 3px rgba(0,0,0,.22);overflow:hidden;position:relative}
+.sheet .wrap{width:auto;max-width:none;padding:0 40px}
+.sheet>.wrap:first-child,.sheet>main>.wrap:first-child{padding-top:1px}
+.sheet .hero{background:linear-gradient(#fff 60%,#f5f5f5);border-bottom:1px solid #e2e2e2;padding-top:48px}
+.sheet .hero .wrap{padding:0 40px}
+.hero h1{font-size:52px;letter-spacing:-1.8px;color:#1a1a1a}
+.hero h2{font-size:21px;color:#6b6b6b}
+/* Features inside the sheet: no box within a box */
+.sheet .carousel{margin:0 -40px;border:0;border-radius:0;box-shadow:none;background:none}
+.sheet .carousel .slide .feature{padding:44px 0 60px}
+.feature .txt h3{font-size:32px;color:#1a1a1a}
+.feature .txt p{font-size:16px;color:#555;line-height:1.55}
+.sheet .buy{border-top:1px solid #e6e6e6;margin:0 -40px;padding:34px 40px 38px;background:linear-gradient(#fafafa,#fff)}
+/* Home modules */
+.sheet.gallery .trio{margin:0;border:0;border-radius:0;box-shadow:none;background:linear-gradient(#fff,#f6f6f6)}
+.sheet.gallery .trio a.card{padding:26px 12px 24px}
+.modules{width:980px;max-width:calc(100% - 20px);margin:0 auto 18px;display:flex;gap:18px;align-items:stretch}
+.promo-dark{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:22px;padding:22px 26px;border-radius:5px;background:linear-gradient(#4a4a4a,#2b2b2b);box-shadow:0 1px 3px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12);color:#ddd;overflow:hidden;position:relative}
+.promo-dark:hover{text-decoration:none}
+.pd-icon{width:76px;height:76px;object-fit:contain;flex:none;align-self:flex-start}
+.pd-copy{flex:1;min-width:0;display:block}
+.pd-copy strong{display:block;font-size:34px;font-weight:normal;letter-spacing:-1px;color:#fff;line-height:1.05}
+.pd-copy em{display:block;font-style:normal;font-size:19px;color:#fff;margin:2px 0 8px}
+.pd-text{display:block;font-size:13px;line-height:1.5;color:#c8c8c8}
+.pd-more{display:inline-block;margin-top:8px;color:#fff;font-size:13px}
+.promo-dark:hover .pd-more{text-decoration:underline}
+.pd-shot{width:150px;height:auto;flex:none;margin:-6px -6px -60px 0;align-self:flex-start;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.sheet.side{flex:0 0 240px;margin:0;padding:22px 20px 18px;box-sizing:border-box;text-align:center;background:linear-gradient(#fff,#eee)}
+.sheet.side h4{font-size:17px;font-weight:bold;letter-spacing:-.3px;color:#222;margin:0 0 4px}
+.sheet.side p{font-size:12px;color:#555;margin:0 0 14px}
+.sheet.side .btn{font-size:14px;padding:8px 18px}
+.side-num{display:block;font-size:64px;font-weight:bold;letter-spacing:-4px;line-height:1;margin:16px 0 0;background:linear-gradient(#777,#222);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sheet.side .side-cap{margin:4px 0 0;font-size:11px;color:#888}
+.fineprint{width:980px;max-width:calc(100% - 20px);box-sizing:border-box;margin:0 auto;padding:0 6px;color:#777;font-size:11px;line-height:1.6}
+/* Install + Mirror pages inside the sheet */
+.sheet ol.steps{padding:24px 0 0 22px;margin:0}
+.sheet .columns{border-bottom:0}
+.sheet .list-foot{margin-bottom:24px}
+/* Footer: breadcrumb directory box, then fine print */
+footer{margin-top:24px;padding:0 0 40px;color:#777}
+footer>.wrap{width:980px;max-width:calc(100% - 20px)}
+.directory{border:1px solid #cfcfcf;border-radius:5px;background:#f4f4f4;margin-bottom:14px;overflow:hidden}
+footer .crumbs{display:flex;height:32px;line-height:32px;margin:0;padding:0;border:0;border-bottom:1px solid #d6d6d6;border-radius:0;background:linear-gradient(#fdfdfd,#ececec);font-size:12px}
+footer .crumbs>a,footer .crumbs>span{padding:0 18px 0 14px;position:relative;color:#555}
+footer .crumbs>a:after{content:"";position:absolute;right:-1px;top:4px;width:22px;height:22px;border-top:1px solid #cfcfcf;border-right:1px solid #cfcfcf;transform:rotate(45deg) scale(.75);transform-origin:center}
+footer .crumbs span:before{content:none}
+footer .crumbs>span{color:#333;padding-left:22px}
+footer .crumbs .home{display:flex;align-items:center;padding-right:22px}
+footer .crumbs>a+a{padding-left:22px}
+footer .cols{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:14px 22px 18px}
+footer .cols h5{margin:0 0 4px;font-size:11px;color:#444}
+footer .cols a{display:block;font-size:11px;line-height:1.7;color:#777}
+footer .cols a:hover{color:#08c}
+footer p{font-size:11px;margin:0 0 4px;padding:0 6px}
+footer .legal{color:#888}
+@media(max-width:760px){
+ #gn{height:auto;margin-top:10px}
+ #gn li{border:0}
+ #gn #menu:checked~ul li a{border-top:1px solid rgba(0,0,0,.15)}
+ #gn .burger{color:#333;height:36px;line-height:36px}
+ #sub .wrap{padding:14px 4px 10px;flex-wrap:wrap;gap:8px}
+ #sub .name{font-size:26px;width:100%}
+ #sub nav{gap:16px;margin-left:0}
+ #sub nav a{min-height:0}
+ .appicon{width:34px;height:34px;border-radius:8px}
+ .sheet{max-width:calc(100% - 12px);margin-bottom:12px}
+ .sheet .wrap,.sheet .hero .wrap{padding:0 18px}
+ .sheet .carousel,.sheet .buy{margin-left:-18px;margin-right:-18px}
+ .sheet .buy{padding:26px 18px 30px}
+ .sheet .hero{padding-top:30px}
+ .modules{flex-direction:column;max-width:calc(100% - 12px);gap:12px}
+ .promo-dark{flex-wrap:wrap;padding:20px}
+ .pd-icon{width:56px;height:56px}
+ .pd-copy strong{font-size:28px}
+ .pd-shot{display:none}
+ .sheet.side{flex:none}
+ footer>.wrap{max-width:calc(100% - 12px)}
+ footer .cols{grid-template-columns:repeat(2,1fr)}
+}
+@media(min-width:761px) and (max-width:980px){
+ #gn #menu:checked~ul li a{border-top:1px solid rgba(0,0,0,.15)}
+ #gn .burger{color:#333;height:36px;line-height:36px}
+ .trio{grid-template-columns:repeat(3,1fr)}
+ .trio a.card:nth-child(5n){border-right:1px solid #e3e3e3}
+ .trio a.card:nth-child(3n){border-right:0}
+ .trio a.card:nth-child(n+4){border-top:1px solid #e3e3e3}
+}
+#gn+.sheet{margin-top:22px}
+@media(max-width:760px){.hero h1{font-size:34px;letter-spacing:-1px}.hero h2{font-size:17px}.feature .txt h3{font-size:26px}.feature .txt p{font-size:15px}}
+.hero .wrap>img.mirror-window{-webkit-box-reflect:none;margin-bottom:48px}
+ul.downloads li{padding:10px 18px 10px 14px}
+ul.downloads .appicon{width:36px;height:36px;border-radius:8px}
+/* Review fixes: let the menu grow, keep the promo open on phones, keep contrast. */
+@media(max-width:980px){#gn{height:auto;overflow:visible}#gn ul{overflow:hidden;border-radius:5px}#gn #menu:checked~.burger{color:#111}}
+@media(max-width:760px){.promo-dark{flex:none}}
+#sub nav a.on{color:#666}
+#sub nav a:hover{color:#08c}
+footer .cols a{color:#5f5f5f}
+#gn a:focus-visible{outline:2px solid #2a7fcc;outline-offset:-3px}

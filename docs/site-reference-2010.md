@@ -11,3 +11,7 @@ Our adaptation retains original project names, honest compatibility information 
 ## Revision after visual review
 
 The September layout experiment was reverted on 2026-11-10 in favor of the existing glossy navigation, centered heroes, three-column app catalog and full-size feature rows. Rewind uses the same 534 × 1000 photographic device frame as the other apps, composed with `site/reframe.swift`. Capture actual screens directly over Veency/VNC at 640 × 960; do not capture the Mac Mirror window or use the experimental 320 × 480 stream. Inspect settled frames before framing them. Visual checks cover desktop, 428px mobile and 320px mobile; retain wrapping product navigation, proportional images and readable stacked feature sections.
+
+## Launch shell (2026-11-11)
+
+Re-checked against headless-Chrome renders of the Wayback captures of apple.com/ipodtouch (Sept 2010), /ipodtouch/features and /iphone/features. Adopted their frame while keeping our readable type sizes and centered heroes: light gray page; silver rounded global bar with an 18px top margin; product name plus app icon (rounded, iOS 4 gloss) set on the gray with plain subnav links and a small Buy pill; content in white rounded sheets with a soft shadow; home page as stacked modules (hero, five-across gallery, dark promo panel like the iTunes 10 module, white side box); footer as a breadcrumb box with directory columns, then fine print. web.archive.org is blocked for WebFetch; render captures with headless Chrome using `if_` URLs instead.
