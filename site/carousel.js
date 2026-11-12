@@ -15,9 +15,14 @@
     car.appendChild(prev); car.appendChild(next); car.appendChild(dots);
     (function (car, track, dots, n) {
       var cur = 0, timer;
-      for (var i = 0; i < n; i++) { var d = document.createElement('a'); d.href = '#'; d.setAttribute('data-i', i); dots.appendChild(d); d.onclick = function (e) { e.preventDefault(); go(parseInt(this.getAttribute('data-i'), 10), true); }; }
-      function go(i, manual) { cur = (i + n) % n; track.style.marginLeft = (-cur * 100) + '%'; for (var k = 0; k < n; k++) dots.children[k].className = k === cur ? 'on' : ''; if (manual) rest(); }
-      function rest() { clearInterval(timer); timer = setInterval(function () { if (!window.matchMedia || !window.matchMedia('(max-width: 760px), (prefers-reduced-motion: reduce)').matches) go(cur + 1); }, 7000); }
+      for (var i = 0; i < n; i++) { var d = document.createElement('a'); d.href = '#'; d.setAttribute('data-i', i); d.setAttribute('aria-label', 'Show feature ' + (i + 1) + ' of ' + n); dots.appendChild(d); d.onclick = function (e) { e.preventDefault(); go(parseInt(this.getAttribute('data-i'), 10), true); }; }
+      function go(i, manual) { cur = (i + n) % n; track.style.marginLeft = (-cur * 100) + '%'; for (var k = 0; k < n; k++) { dots.children[k].className = k === cur ? 'on' : ''; if (k === cur) dots.children[k].setAttribute('aria-current', 'true'); else dots.children[k].removeAttribute('aria-current'); } if (manual) rest(); }
+      function rest() { clearInterval(timer); timer = setInterval(function () { if (!paused && (!window.matchMedia || !window.matchMedia('(max-width: 760px), (prefers-reduced-motion: reduce)').matches)) go(cur + 1); }, 7000); }
+      var paused = false;
+      car.addEventListener('mouseenter', function () { paused = true; }, false);
+      car.addEventListener('mouseleave', function () { paused = false; }, false);
+      car.addEventListener('focusin', function () { paused = true; }, false);
+      car.addEventListener('focusout', function () { paused = false; }, false);
       car.querySelector('.prev').onclick = function (e) { e.preventDefault(); go(cur - 1, true); };
       car.querySelector('.next').onclick = function (e) { e.preventDefault(); go(cur + 1, true); };
       var x0 = null;

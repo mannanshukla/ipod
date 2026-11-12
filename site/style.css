@@ -125,3 +125,72 @@ img{height:auto}
  #gn .burger{display:block;position:absolute;right:12px;top:0;width:44px;height:38px;line-height:38px;text-align:center;color:#eee;font-size:22px;cursor:pointer}
  #gn #menu:checked~ul li{display:block}
 }
+
+/* One template for every page: product bar, reflected hero, gallery, buy box, breadcrumb footer. */
+#sub{height:46px}#sub .wrap{height:46px}
+#sub .name{font-size:22px;font-weight:normal;letter-spacing:-.6px;color:#111}
+.hero{padding:44px 0 0;overflow:hidden}
+.hero h2{margin-bottom:30px}
+/* 2010 product shots stand on a glossy floor. */
+.hero .wrap>img,.hero .wrap>.device-shot,.lineup img{-webkit-box-reflect:below 1px linear-gradient(transparent 82%,rgba(255,255,255,.28))}
+.hero .wrap>img,.hero .wrap>.device-shot{margin-bottom:60px}
+.ct .hero{padding-bottom:20px}
+.hero .mirror-window{width:300px;border-radius:12px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.22))}
+.lineup{display:flex;justify-content:center;align-items:flex-end;margin:6px auto 0;padding-bottom:70px}
+.lineup img{width:150px;margin:0 -14px;position:relative}
+.lineup img:nth-child(2),.lineup img:nth-child(4){width:180px;z-index:1}
+.lineup img:nth-child(3){width:215px;z-index:2}
+/* Home catalog: one gallery panel, five across, like the 2010 iPod family row. */
+.trio{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:36px 0 10px;padding:0;border:1px solid #d9d9d9;border-radius:10px;background:linear-gradient(#fff,#f4f4f4);box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.trio a.card{border:0;border-radius:0;background:none;padding:24px 12px 22px;border-right:1px solid #e3e3e3}
+.trio a.card:nth-child(5n){border-right:0}
+.trio a.card:nth-child(n+6){border-top:1px solid #e3e3e3}
+.trio a.card:hover{background:rgba(0,0,0,.025)}
+.trio img,.trio .device-shot{width:112px}
+.trio h3{font-size:19px}
+.trio p{font-size:13px;line-height:1.4}
+.feature.promo{border-bottom:0}
+/* Second clause of a headline, set in gray the way the launch pages did. */
+.feature .txt h3 em{font-style:normal;color:#888}
+/* Three-up text modules below the gallery. */
+.columns{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;padding:40px 0 10px;border-bottom:1px solid #e6e6e6}
+.columns h4{font-size:19px;font-weight:normal;letter-spacing:-.4px;color:#111;margin:0 0 8px}
+.columns p{font-size:14px;color:#555;margin:0 0 10px}
+/* Install downloads */
+.list-title{font-size:26px;font-weight:normal;letter-spacing:-.6px;color:#111;margin:36px 0 12px}
+ul.downloads{list-style:none;margin:0;padding:0;border:1px solid #d9d9d9;border-radius:10px;overflow:hidden;background:linear-gradient(#fff,#f6f6f6)}
+ul.downloads li{display:flex;align-items:center;gap:16px;padding:10px 18px;border-top:1px solid #e6e6e6}
+ul.downloads li:first-child{border-top:0}
+ul.downloads .app{font-size:17px;color:#111;flex:1}
+ul.downloads .ver{color:#888;font-size:13px}
+.btn.small{padding:4px 14px;font-size:13px;border-radius:12px}
+.list-foot{color:#666;font-size:13px;text-align:center;margin:18px 0 30px}
+/* Footer: breadcrumb bar, then the small print. */
+footer{text-align:left;border-top:0;margin-top:40px;padding:0 0 40px}
+footer .crumbs{height:30px;line-height:30px;border:1px solid #d6d6d6;border-radius:5px;background:linear-gradient(#fdfdfd,#ececec);padding:0 14px;font-size:12px;margin-bottom:14px}
+footer .crumbs a{color:#555}
+footer .crumbs span:before{content:"\203A";margin:0 10px;color:#aaa}
+footer .crumbs span{color:#333}
+footer p{margin:0 0 6px;line-height:1.5}
+footer .note{color:#666}
+@media(max-width:760px){
+ #sub .name{font-size:18px}
+ .lineup img{width:84px;margin:0 -9px}
+ .lineup img:nth-child(2),.lineup img:nth-child(4){width:100px}
+ .lineup img:nth-child(3){width:120px}
+ .lineup{padding-bottom:40px}
+ .hero .wrap>img,.hero .wrap>.device-shot{margin-bottom:40px}
+ .trio{grid-template-columns:repeat(2,1fr);flex-direction:initial}
+ .trio a.card,.trio a.card:nth-child(5n){border-right:1px solid #e3e3e3;width:auto}
+ .trio a.card:nth-child(2n){border-right:0}
+ .trio a.card:nth-child(n+3){border-top:1px solid #e3e3e3}
+ .trio img,.trio .device-shot{width:96px}
+ .columns{grid-template-columns:1fr;gap:20px}
+ ul.downloads li{flex-wrap:wrap;gap:4px 12px}
+ ul.downloads .app{flex:1 1 100%}
+ footer{padding:0 0 30px}
+}
+.hero .mirror-window{-webkit-box-reflect:none}
+@media(max-width:480px){.lineup img:first-child,.lineup img:last-child{display:none}}
+@media(max-width:760px){#sub,#sub .wrap{height:auto}}
+ul.downloads .ver{color:#666}
